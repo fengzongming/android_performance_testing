@@ -22,6 +22,7 @@ class App(object):
         self.stop_command = app_information[1]
         self.app_package = app_information[2]
         self.app_activity = app_information[3]
+        self.run_times = app_information[4]
 
     # 读取配置文件
     def read_config(self):
@@ -32,8 +33,9 @@ class App(object):
         stop_command = config.get('command', 'stop_app')
         app_package = config.get('package', 'app_package')
         app_activity = config.get('activity', 'app_activity')
+        run_times = config.get('times', 'run_times')
 
-        return start_command, stop_command, app_package, app_activity
+        return start_command, stop_command, app_package, app_activity, run_times
 
     # 启动App
     def start_app(self):
@@ -56,12 +58,12 @@ class App(object):
 
 # 控制器类, 用于控制app的执行次数和统计启动时间
 class Controller(object):
-    def __init__(self, count=3):
+    def __init__(self):
         # 获取要执行的app
         self.app = App()
 
         # 获取需要循环执行的次数
-        self.count = count
+        self.count = self.app.run_times
 
         # 获取app的当前时间戳和启动时间
         self.all_data = [("current_time", "launch_time")]
@@ -78,8 +80,8 @@ class Controller(object):
 
     # 执行多次测试流程
     def run(self):
-        if self.count > 0:
-            for i in range(self.count):
+        if int(self.count) > 0:
+            for i in range(int(self.count)):
                 self.run_one_time()
 
     # 把结果写入到report文件夹下的, csv文件里面
@@ -101,6 +103,6 @@ class Controller(object):
 
 if __name__ == '__main__':
     # 在Controller()里面传入执行的次数,不传的话, 默认是执行3次
-    controller = Controller(2)
+    controller = Controller()
     controller.run()
     controller.write_result_to_csv()
